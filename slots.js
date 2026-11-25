@@ -7,9 +7,10 @@ import cells from "./notebook.html?cells";
 const notebook = new NotebookRuntime();
 const state = (root) => ({root, expanded: [], variables: []});
 
-// Every cell, with Notebook Kit's own define, so it evaluates as in the notebook. Nothing is displayed:
-// the cells' display root is never attached to the page.
-for (const cell of cells) notebook.define(state(document.createElement("div")), cell);
+// Every cell, with Notebook Kit's own define but no observer, so it is lazy: it runs only when a slot
+// needs its value, and displays nothing (its display root is never attached to the page).
+const unobserved = () => undefined;
+for (const cell of cells) notebook.define(state(document.createElement("div")), cell, unobserved);
 
 // The technique: per slot, one more cell that reads the output by name and displays it in the slot.
 for (const slot of document.querySelectorAll("[data-output]")) {

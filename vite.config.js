@@ -1,12 +1,13 @@
 // Build step: `import cells from "./notebook.html?cells"` gives the notebook's transpiled cells.
 // Fails the build when index.html names an output the notebook doesn't have.
 import {readFileSync} from "node:fs";
+import {resolve} from "node:path";
 import {JSDOM} from "jsdom";
 import {deserialize, transpile} from "@observablehq/notebook-kit";
 import {defineConfig} from "vite";
 
-const {DOMParser} = new JSDOM().window;
-const parse = (file) => new DOMParser().parseFromString(readFileSync(file, "utf8"), "text/html");
+const parser = new (new JSDOM().window.DOMParser)();
+const template = resolve("index.html");
 
 function cells() {
   return {
@@ -16,13 +17,14 @@ function cells() {
       if (!id.endsWith(".html?cells")) return;
       const file = id.slice(0, -"?cells".length);
       this.addWatchFile(file);
-      const notebook = deserialize(readFileSync(file, "utf8"), {parser: new DOMParser()});
+      this.addWatchFile(template);
+      const notebook = deserialize(readFileSync(file, "utf8"), {parser});
       const cells = notebook.cells.map((cell) => ({id: cell.id, ...transpile(cell)}));
 
       const names = new Set(cells.flatMap((c) => (c.output ? [c.output] : c.outputs ?? [])));
-      const slots = [...parse("index.html").querySelectorAll("[data-output]")].map((s) => s.dataset.output);
-      const missing = slots.filter((name) => !names.has(name));
-      if (missing.length) this.error(`index.html names outputs ${file} doesn't have: ${missing.join(", ")} (it has ${[...names].join(", ")})`);
+      const page = parser.parseFromString(readFileSync(template, "utf8"), "text/html");
+      const missing = [...page.querySelectorAll("[data-output]")].map((s) => s.dataset.output).filter((n) => !names.has(n));
+      if (missing.length) this.error(`${template} names outputs ${file} doesn't have: ${missing.join(", ")} (it has ${[...names].join(", ")})`);
 
       const fields = ["inputs", "outputs", "output", "autoview", "automutable"];
       const definition = (c) =>

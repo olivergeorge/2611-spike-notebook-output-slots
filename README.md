@@ -19,8 +19,6 @@ This is offered as a data point for [observablehq/notebook-kit#103](https://gith
 
 ## ADR: Bind template slots to notebook values by name, in a host outside Notebook Kit's page
 
-**Status:** proof of concept
-
 ### Context
 
 PR #103 renders each cell into an existing `<div id="cell-${id}">` when the page has one, so an author can stub out a layout and have the cells fill it. The PR names the need: build components in a notebook, then use a vanilla HTML + CSS template that places them "by just referring to cell names", like a `<Cell id={i} />` hooked into a shared runtime. It also names the friction: cell ids appear nowhere in the UI.
@@ -34,7 +32,7 @@ Our context: the site already has its own templates and its own page host, and w
 The template names **values**, not cells. A small host, outside Notebook Kit's own page, fills each slot.
 
 1. **Build** (`vite.config.js`): a Vite plugin turns `notebook.html?cells` into the cells' definitions, using Notebook Kit's `deserialize` and `transpile`. The build fails if `index.html` names a value the notebook doesn't have.
-2. **Run** (`slots.js`): every cell is defined in one `NotebookRuntime` with Notebook Kit's `define`, into a display root that is never attached to the page. Cells evaluate as in the notebook, but nothing shows.
+2. **Run** (`slots.js`): every cell is defined in one `NotebookRuntime` with Notebook Kit's own `define`, but with no observer. That keeps them lazy: a cell runs only when a slot needs its value, and displays nothing.
 3. **Bind** (`slots.js`): each `[data-output="name"]` gets one more cell, defined the same way, whose body is `(value) => value`, whose input is `name` and whose display root is the slot. Notebook Kit's own display code shows the value, so a DOM node, an inspected object and an error each appear the way a notebook would show them.
 
 ```js
@@ -47,30 +45,29 @@ notebook.define({root: slot, expanded: [], variables: []},
 Gains:
 
 - **Readable handles.** The template says `chart`, the name in the notebook's source. Reordering or editing cells never changes it.
-- **No change to Notebook Kit.** It uses the published `@observablehq/notebook-kit` and `/runtime` exports.
 - **One shared runtime.** Slots anywhere on the page stay reactive with each other: the slider in the sidebar redraws the chart in the main column.
+- **Only what's slotted runs.** Cells no slot depends on never run. The notebook can keep its own preview cells (cell 7 displays the input and the chart, so `notebook.html` reads properly in Notebook Kit), and the host never runs them.
 - **Errors show where the value would.** A cell that throws shows `RuntimeError: …` in its slot, and the stale chart is gone.
 - **Mistakes fail at build.** A misspelt slot stops the build and lists the names that exist.
-- **The template owns layout.** The notebook doesn't know where its values go, and a page shows only the ones it names.
+- **No change to Notebook Kit,** and the notebook doesn't know where its values go.
 
 Costs and limits:
 
 - **Values, not displays.** A slot gets a variable's value. Anything a cell only displays has no name and no slot: an expression cell, a `display()` call, the input element inside `const x = view(…)`. The notebook therefore keeps the input element and its value apart (`thresholdInput`, and `threshold = Generators.input(thresholdInput)`), which is the boilerplate `view()` exists to remove.
-- **The notebook reads worse on its own.** Declaration cells don't display, so `notebook.html` in Notebook Kit's own preview shows almost nothing. Authors need display cells for previewing, which this host must then ignore.
 - **One slot per name.** A DOM node can only be in one place, so two slots naming `chart` take it from each other.
 - **A name is a contract.** Renaming a variable breaks the template. The build catches it, but nothing renames it for you.
 - **Most of Notebook Kit's page is left behind.** Its Vite plugin does static Markdown and HTML rendering, `FileAttachment` and database resolution, SQL result caching and themes. This host does none of that. Our production host re-implements the parts it needs, which is a real cost.
-- **Undocumented seams.** The state object passed to `define` (`{root, expanded, variables}`) is internal plumbing, not a documented API.
-- **Detached cells.** Every cell still runs, and anything that waits on its own display root being on screen (`visibility()`) probably never resolves. `width` measures `<main>`, not the slot.
+- **An undocumented seam.** The state object passed to `define` (`{root, expanded, variables}`) is internal plumbing. A small documented way to mount a named value into an element would serve any external host, whichever way PR #103 goes.
+- **`width` measures `<main>`, not the slot,** so a chart in a narrow column needs its own width. PR #103's cell slots have the same problem.
 
 ### Compared with PR #103
 
 The two bind different things. PR #103 moves a cell's **display**. This moves a variable's **value**.
 
-- PR #103 keeps the notebook's authoring model whole: `view()`, `display()`, expression cells and Notebook Kit's page features all work, and a cell with no slot stays on the page, which keeps scratch cells and upstream errors visible while working. Its only wart is the handle, the numeric id; a readable name attribute on the cell would fix that upstream in a few lines.
-- This approach is for a site that already owns its host and templates, and wants the notebook to be a source of values. It gives up the parts of the authoring model listed above to get there.
+- PR #103 keeps the notebook's authoring model whole: `view()`, `display()`, expression cells and Notebook Kit's page features all work. Its wart is the handle, the numeric id. A readable name attribute on the cell's `<script>` would fix that upstream in a few lines. It still has to decide what happens to a cell with no slot (append to `<main>`, or leave it out) and what `width` means in a narrow slot.
+- This approach suits a site that already owns its host and templates, and wants the notebook to be a source of values. It gives up the parts of the authoring model listed above to get there.
 
-For an upstream feature, readable cell names on PR #103's approach look like the better fit. This repository is the other branch, shown at its smallest.
+For Notebook Kit's own page, readable cell names on PR #103's approach look like the better fit. This repository is the other branch, at its smallest.
 
 ## Files
 

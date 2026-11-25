@@ -24,13 +24,18 @@
       x: {domain: rainfall.map((d) => d.month), label: null},
       y: {grid: true, label: "mm"},
       marks: [
-        Plot.barY(rainfall, {x: "month", y: "mm", fill: (d) => (d.mm > threshold ? "steelblue" : "#ccc")}),
-        Plot.ruleY([threshold], {stroke: "steelblue", strokeDasharray: "4 3"}),
+        Plot.barY(rainfall, {x: "month", y: "mm", fill: (d) => (d.mm > threshold ? "#009B8F" : "#DCE5E3")}),
+        Plot.ruleY([threshold], {stroke: "#0C2B33", strokeDasharray: "4 3"}),
         Plot.ruleY([0])
       ]
     });
   </script>
   <script id="6" type="text/markdown" output="summary">
     **${rainfall.filter((d) => d.mm > threshold).length} of 12 months** had more than ${threshold} mm.
+  </script>
+  <script id="7" type="module">
+    // For previewing in Notebook Kit only. Nothing names this cell, so the template's host never runs it.
+    display(thresholdInput);
+    display(chart);
   </script>
 </notebook>

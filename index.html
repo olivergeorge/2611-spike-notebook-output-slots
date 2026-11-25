@@ -3,11 +3,19 @@
 <head>
   <meta charset="utf-8">
   <title>Rainfall dashboard</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&display=swap">
   <style>
-    body { font: 16px/1.4 system-ui, sans-serif; margin: 2rem; }
-    .dashboard { display: grid; grid-template-columns: 16rem 1fr; gap: 1.5rem; max-width: 64rem; }
-    aside, section { border: 1px solid #ddd; border-radius: 6px; padding: 1rem; }
-    .slot-error { color: crimson; font-family: monospace; }
+    /* Condense: ink on a drafting sheet, ruled square cells, one teal. */
+    :root { --ink: #0C2B33; --ink-2: #3A535B; --sheet: #F5F8F7; --teal: #009B8F; }
+    body { font: 17px/1.55 Archivo, "Helvetica Neue", Arial, sans-serif; font-variant-numeric: tabular-nums lining-nums;
+           color: var(--ink); background: var(--sheet); margin: 2rem; }
+    h1 { font-size: 46px; line-height: 1.07; letter-spacing: -0.02em; margin: 0 0 1.5rem; }
+    h2 { font: 600 12.5px/1.2 Archivo, sans-serif; font-stretch: 78%; letter-spacing: 0.06em; text-transform: uppercase;
+         color: var(--ink-2); margin: 0 0 1rem; }
+    .dashboard { display: grid; grid-template-columns: 16rem 1fr; max-width: 64rem; border: 1.5px solid var(--ink); }
+    aside, section { background: #fff; padding: 20px 24px; }
+    aside { border-right: 1.5px solid var(--ink); }
+    input { accent-color: var(--teal); }
   </style>
 </head>
 <body>
