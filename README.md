@@ -33,11 +33,11 @@ The template names **values**, not cells. A small host, outside Notebook Kit's o
 
 1. **Build** (`vite.config.js`): a Vite plugin turns `notebook.html?cells` into the cells' definitions, using Notebook Kit's `deserialize` and `transpile`. The build fails if `index.html` names a value the notebook doesn't have.
 2. **Run** (`slots.js`): every cell is defined in one `NotebookRuntime` with Notebook Kit's own `define`, but with no observer. That keeps them lazy: a cell runs only when a slot needs its value, and displays nothing.
-3. **Bind** (`slots.js`): each `[data-output="name"]` gets one more cell, defined the same way, whose body is `(value) => value`, whose input is `name` and whose display root is the slot. Notebook Kit's own display code shows the value, so a DOM node, an inspected object and an error each appear the way a notebook would show them.
+3. **Bind** (`slots.js`): each `[data-output="name"]` gets one more cell, defined the same way, whose body is `(value) => value`, whose input is `name` and whose display root is the slot. Notebook Kit's own display code shows the value, so a DOM node, any other value and an error each appear as a notebook shows them.
 
 ```js
 notebook.define({root: slot, expanded: [], variables: []},
-  {id: `slot ${name}`, body: (value) => value, inputs: [name], autodisplay: true});
+  {body: (value) => value, inputs: [slot.dataset.output], autodisplay: true});
 ```
 
 ### Consequences
@@ -46,7 +46,7 @@ Gains:
 
 - **Readable handles.** The template says `chart`, the name in the notebook's source. Reordering or editing cells never changes it.
 - **One shared runtime.** Slots anywhere on the page stay reactive with each other: the slider in the sidebar redraws the chart in the main column.
-- **Only what's slotted runs.** Cells no slot depends on never run. The notebook can keep its own preview cells (cell 7 displays the input and the chart, so `notebook.html` reads properly in Notebook Kit), and the host never runs them.
+- **Only what's slotted runs.** Cells no slot depends on never run. The notebook can keep its own preview cells (cell 6 displays the input and the chart, so `notebook.html` reads properly in Notebook Kit), and the host never runs them.
 - **Errors show where the value would.** A cell that throws shows `RuntimeError: …` in its slot, and the stale chart is gone.
 - **Mistakes fail at build.** A misspelt slot stops the build and lists the names that exist.
 - **No change to Notebook Kit,** and the notebook doesn't know where its values go.

@@ -4,8 +4,7 @@
   <script id="1" type="text/markdown">
     # Rainfall
 
-    A made-up year of monthly rainfall. This notebook is the components; `index.html` lays them out.
-    This heading has no slot, so the template never shows it.
+    A made-up year of monthly rainfall. This notebook holds the components; `index.html` lays them out.
   </script>
   <script id="2" type="module">
     const rainfall = [
@@ -19,22 +18,21 @@
     const thresholdInput = Inputs.range([30, 80], {label: "Wet month above (mm)", step: 1, value: 55});
     const threshold = Generators.input(thresholdInput);
   </script>
-  <script id="5" type="module">
+  <script id="4" type="module">
     const chart = Plot.plot({
       x: {domain: rainfall.map((d) => d.month), label: null},
       y: {grid: true, label: "mm"},
       marks: [
         Plot.barY(rainfall, {x: "month", y: "mm", fill: (d) => (d.mm > threshold ? "#009B8F" : "#DCE5E3")}),
-        Plot.ruleY([threshold], {stroke: "#0C2B33", strokeDasharray: "4 3"}),
-        Plot.ruleY([0])
+        Plot.ruleY([threshold], {stroke: "#0C2B33", strokeDasharray: "4 3"})
       ]
     });
   </script>
-  <script id="6" type="text/markdown" output="summary">
+  <script id="5" type="text/markdown" output="summary">
     **${rainfall.filter((d) => d.mm > threshold).length} of 12 months** had more than ${threshold} mm.
   </script>
-  <script id="7" type="module">
-    // For previewing in Notebook Kit only. Nothing names this cell, so the template's host never runs it.
+  <script id="6" type="module">
+    // For previewing in Notebook Kit. No slot needs it, so the page never runs it.
     display(thresholdInput);
     display(chart);
   </script>

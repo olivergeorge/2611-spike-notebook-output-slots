@@ -1,19 +1,14 @@
-// Browser: run the notebook's cells in one runtime, displaying nothing,
-// then show each output named by a [data-output="name"] slot in that slot.
+// Run the notebook's cells in one runtime, then show each output a [data-output="name"] slot names.
 import {NotebookRuntime} from "@observablehq/notebook-kit/runtime";
-import "@observablehq/notebook-kit/inspector.css";
 import cells from "./notebook.html?cells";
 
 const notebook = new NotebookRuntime();
 const state = (root) => ({root, expanded: [], variables: []});
 
-// Every cell, with Notebook Kit's own define but no observer, so it is lazy: it runs only when a slot
-// needs its value, and displays nothing (its display root is never attached to the page).
-const unobserved = () => undefined;
-for (const cell of cells) notebook.define(state(document.createElement("div")), cell, unobserved);
+// Every cell, with no observer: lazy, so it runs only when a slot needs its value, and shows nothing.
+for (const cell of cells) notebook.define(state(document.createElement("div")), cell, () => {});
 
 // The technique: per slot, one more cell that reads the output by name and displays it in the slot.
 for (const slot of document.querySelectorAll("[data-output]")) {
-  const name = slot.dataset.output;
-  notebook.define(state(slot), {id: `slot ${name}`, body: (value) => value, inputs: [name], autodisplay: true});
+  notebook.define(state(slot), {body: (value) => value, inputs: [slot.dataset.output], autodisplay: true});
 }
