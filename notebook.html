@@ -1,0 +1,36 @@
+<!doctype html>
+<notebook theme="air">
+  <title>Rainfall</title>
+  <script id="1" type="text/markdown">
+    # Rainfall
+
+    A made-up year of monthly rainfall. This notebook is the components; `index.html` lays them out.
+    This heading has no slot, so the template never shows it.
+  </script>
+  <script id="2" type="module">
+    const rainfall = [
+      {month: "Jan", mm: 48}, {month: "Feb", mm: 39}, {month: "Mar", mm: 46},
+      {month: "Apr", mm: 53}, {month: "May", mm: 61}, {month: "Jun", mm: 58},
+      {month: "Jul", mm: 66}, {month: "Aug", mm: 71}, {month: "Sep", mm: 59},
+      {month: "Oct", mm: 62}, {month: "Nov", mm: 55}, {month: "Dec", mm: 52}
+    ];
+  </script>
+  <script id="3" type="module">
+    const thresholdInput = Inputs.range([30, 80], {label: "Wet month above (mm)", step: 1, value: 55});
+    const threshold = Generators.input(thresholdInput);
+  </script>
+  <script id="5" type="module">
+    const chart = Plot.plot({
+      x: {domain: rainfall.map((d) => d.month), label: null},
+      y: {grid: true, label: "mm"},
+      marks: [
+        Plot.barY(rainfall, {x: "month", y: "mm", fill: (d) => (d.mm > threshold ? "steelblue" : "#ccc")}),
+        Plot.ruleY([threshold], {stroke: "steelblue", strokeDasharray: "4 3"}),
+        Plot.ruleY([0])
+      ]
+    });
+  </script>
+  <script id="6" type="text/markdown" output="summary">
+    **${rainfall.filter((d) => d.mm > threshold).length} of 12 months** had more than ${threshold} mm.
+  </script>
+</notebook>

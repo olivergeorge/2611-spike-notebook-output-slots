@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Rainfall dashboard</title>
+  <style>
+    body { font: 16px/1.4 system-ui, sans-serif; margin: 2rem; }
+    .dashboard { display: grid; grid-template-columns: 16rem 1fr; gap: 1.5rem; max-width: 64rem; }
+    aside, section { border: 1px solid #ddd; border-radius: 6px; padding: 1rem; }
+    .slot-error { color: crimson; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h1>Rainfall dashboard</h1>
+  <main class="dashboard">
+    <aside>
+      <h2>Controls</h2>
+      <div data-output="thresholdInput"></div>
+      <div data-output="summary"></div>
+    </aside>
+    <section>
+      <h2>By month</h2>
+      <div data-output="chart"></div>
+    </section>
+  </main>
+  <script type="module" src="./slots.js"></script>
+</body>
+</html>
