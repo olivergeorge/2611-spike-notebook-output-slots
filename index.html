@@ -7,17 +7,17 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&display=swap">
   <style>
     /* Condense: ink on a drafting sheet, ruled square cells, one teal. */
-    body { font: 17px/1.5 Archivo, sans-serif; color: #0C2B33; background: #F5F8F7; margin: 2rem; accent-color: #009B8F; }
+    body { font: 17px/1.5 Archivo, sans-serif; color: #0C2B33; background: #F5F8F7; margin: clamp(1rem, 4vw, 2rem); accent-color: #009B8F; }
     a { color: inherit; text-decoration-color: #009B8F; text-underline-offset: 3px; }
     code { font: 14px ui-monospace, monospace; }
     header, footer { max-width: 64rem; }
     header p { max-width: 44rem; }
     h1 { margin: 0.25rem 0 0.5rem; }
     h2, .eyebrow { margin-top: 0; font-size: 12.5px; font-stretch: 78%; letter-spacing: 0.06em; text-transform: uppercase; color: #3A535B; }
-    main { display: grid; grid-template-columns: 20rem 1fr; max-width: 64rem; border: 1.5px solid; }
-    aside, section { background: #fff; padding: 16px 24px 20px; }
+    .dashboard { display: grid; grid-template-columns: 20rem 1fr; max-width: 64rem; border: 1.5px solid; }
+    aside, main { min-width: 0; background: #fff; padding: 16px 24px 20px; }
     aside { border-right: 1.5px solid; }
-    @media (max-width: 56rem) { main { grid-template-columns: 1fr; } aside { border-right: 0; border-bottom: 1.5px solid; } }
+    @media (max-width: 44rem) { .dashboard { grid-template-columns: 1fr; } aside { border-right: 0; border-bottom: 1.5px solid; } }
     /* Show the technique: each slot labels the name it asks for. */
     [data-output] { margin-bottom: 1rem; }
     [data-output]::before { content: 'data-output="' attr(data-output) '"'; display: block; margin-bottom: 4px; font: 12px ui-monospace, monospace; color: #009B8F; }
@@ -31,7 +31,7 @@
     <p>
       The slider, the summary and the chart are values from one <a href="https://observablehq.com/notebook-kit/">Observable Notebook Kit</a> notebook,
       <a href="https://github.com/olivergeorge/2611-spike-notebook-output-slots/blob/main/notebook.html"><code>notebook.html</code></a>.
-      This page is plain HTML and CSS: each slot is a <code>&lt;div data-output="name"&gt;</code>, filled by name, and all of them share one runtime, so they react together.
+      This page is plain HTML and CSS: each slot is a <code>&lt;div data-output="name"&gt;</code>, filled by name, and all of them share one runtime, so they react together. Slots take named values, not what a cell displays.
     </p>
     <p>
       <a href="https://github.com/olivergeorge/2611-spike-notebook-output-slots">Source on GitHub</a> ·
@@ -39,17 +39,18 @@
       <a href="https://github.com/observablehq/notebook-kit/pull/103">notebook-kit#103</a>
     </p>
   </header>
-  <main>
+  <div class="dashboard">
     <aside>
       <h2>Controls</h2>
       <div data-output="thresholdInput"></div>
       <div data-output="summary"></div>
     </aside>
-    <section>
+    <!-- Notebook Kit's width measures the first <main>, so the chart column is the <main>. -->
+    <main>
       <h2>By month</h2>
       <div data-output="chart"></div>
-    </section>
-  </main>
+    </main>
+  </div>
   <footer>
     The layout: <a href="https://github.com/olivergeorge/2611-spike-notebook-output-slots/blob/main/index.html"><code>index.html</code></a>.
     The binding: <a href="https://github.com/olivergeorge/2611-spike-notebook-output-slots/blob/main/slots.js"><code>slots.js</code></a>.

@@ -90,7 +90,7 @@ Costs and limits:
 - **A name is a contract.** Renaming a variable breaks the template. The build catches it, but nothing renames it for you.
 - **Most of Notebook Kit's page is left behind.** Its Vite plugin does more than run cells, such as static Markdown rendering, `FileAttachment` and database resolution, `npm:` and `jsr:` imports, and themes. This host does none of that. Our production host re-implements the parts it needs, which is a real cost.
 - **It leans on details we've only checked against 2.12.0.** `define` and its state object are part of Notebook Kit's documented [Runtime API](https://observablehq.com/notebook-kit/kit#runtime-api), and reading a value through one more cell is how the [Observable runtime](https://github.com/observablehq/runtime) works. Which cells run, though, is `define`'s business: it observes every value a JavaScript cell declares, so the host does its own filtering. A documented way to mount a named value into an element would serve any external host, whichever way PR #103 goes.
-- **`width` is page-wide, not per slot.** It [measures the first `<main>`, else `<body>`](https://github.com/observablehq/notebook-kit/blob/v2.12.0/src/runtime/stdlib/index.ts), so a chart in a narrow column needs its own width. Options A and B face the same question.
+- **`width` is page-wide, not per slot.** It [measures the first `<main>`, else `<body>`](https://github.com/observablehq/notebook-kit/blob/v2.12.0/src/runtime/stdlib/index.ts), so a chart in a narrow column needs its own width. Here the chart column is the page's `<main>`, which works for one column only. Options A and B face the same question.
 
 ### React
 

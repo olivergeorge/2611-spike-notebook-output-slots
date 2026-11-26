@@ -20,10 +20,12 @@
   </script>
   <script id="4" type="module">
     const chart = Plot.plot({
-      x: {domain: rainfall.map((d) => d.month), label: null},
-      y: {grid: true, label: "mm"},
+      width,
+      x: {domain: rainfall.map((d) => d.month), label: null, tickFormat: (month) => month[0]},
+      y: {domain: [0, 80], grid: true, label: "mm"},
       marks: [
         Plot.barY(rainfall, {x: "month", y: "mm", fill: (d) => (d.mm > threshold ? "#009B8F" : "#DCE5E3")}),
+        Plot.ruleY([0]),
         Plot.ruleY([threshold], {stroke: "#0C2B33", strokeDasharray: "4 3"})
       ]
     });
