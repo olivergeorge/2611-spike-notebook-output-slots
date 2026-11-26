@@ -1,5 +1,7 @@
 # Notebook outputs into template slots, by name
 
+**[Live demo](https://olivergeorge.github.io/notebook-output-slots/)**
+
 A minimal proof of concept: write components in an [Observable Notebook Kit](https://github.com/observablehq/notebook-kit) notebook, then lay them out in a plain HTML + CSS page that refers to them by name.
 
 ```html

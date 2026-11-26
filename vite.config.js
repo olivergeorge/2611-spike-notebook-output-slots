@@ -25,4 +25,5 @@ const cells = {
   }
 };
 
-export default {plugins: [cells]};
+// base "./" keeps asset paths relative, so the build works under any path (e.g. GitHub Pages).
+export default {base: "./", plugins: [cells]};
