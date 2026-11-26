@@ -92,6 +92,10 @@ Costs and limits:
 - **An undocumented seam.** The state object passed to `define` (`{root, expanded, variables}`) is internal plumbing. A small documented way to mount a named value into an element would serve any external host, whichever way PR #103 goes.
 - **`width` is page-wide, not per slot,** so a chart in a narrow column needs its own width. Options A and B face the same question.
 
+### React
+
+React doesn't change the technique, but it could package it. None of this is tested here. A framework-neutral custom element, `<notebook-output name="chart">`, should work in React 19, Astro or plain HTML alike. React 19's ref callbacks can return a cleanup, so a component could define the slot variable on mount and delete it on unmount. Where a component wants the value rather than its DOM node, `useSyncExternalStore` can read a runtime variable as React state. React leaves the hard parts as they are: naming values rather than cells, the `view()` element/value split, a runtime per notebook, and unslotted cells. The reverse direction already exists: Notebook Kit displays React elements a cell returns.
+
 ## Files
 
 | File | What |
