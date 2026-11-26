@@ -34,13 +34,13 @@ This is offered as a data point for [observablehq/notebook-kit#103](https://gith
 
 **The options:**
 
-| | Template names | A slot gets | `view()`, `display()` | Notebook Kit's page features | Cells with no slot | Notebooks to pages | Change to Notebook Kit |
-|---|---|---|---|---|---|---|---|
-| A. Cell ids (PR #103) | `cell-3` | the cell's display | work | kept | rendered as now | one to one | 4 lines |
-| B. Named cells | a name on the cell's `<script>` | the cell's display | work | kept | needs a rule | one to one | small |
-| C. Placement in code | `display(value, "controls")` | what the cell displays there | changed | kept | n/a | one to one | API change |
-| D. Values by name, outside host | `chart`, a variable | the variable's value | not slottable | left to the host | never run | many to many | none |
-| E. Observable Framework | nothing: the code sits in the page | what the code displays | work | Framework's own | n/a | no notebooks; pages share code by importing it | none; a different tool |
+| | Slot binds to | `view()`, `display()` | Kit's page features | Unslotted cells | Notebooks to pages | Kit change |
+|---|---|---|---|---|---|---|
+| A. Cell ids (PR #103) | `cell-3` → the cell's display | work | kept | rendered as now | 1 : 1 | 4 lines |
+| B. Named cells | a name on the cell's `<script>` → the cell's display | work | kept | needs a rule | 1 : 1 | small |
+| C. Placement in code | `display(value, target)` → the target | changed | kept | rendered as now | 1 : 1 | API change |
+| D. Values by name (this repo) | `chart` → the variable's value | not slottable | left to the host | never run | many : many | none |
+| E. Observable Framework | no notebook: code sits in the page | work | Framework's own | n/a | n/a (pages import code) | a different tool |
 
 - **A** keeps the authoring model whole, but cell ids aren't shown in the editor, change when a cell is recreated, and a mistyped one silently falls back to the default placement.
 - **B** is the smallest fix to A. Its open questions are whether unslotted cells still render and what `width` means in a narrow slot.
@@ -48,9 +48,7 @@ This is offered as a data point for [observablehq/notebook-kit#103](https://gith
 - **D** is classic Observable embedding by variable name, adapted to Notebook Kit. The authoring model shrinks to named values, but any page can pull from one notebook.
 - **E** already does custom layouts, if authoring in Framework pages rather than a notebook is an option.
 
-Granularity separates the options as much as naming does. A, B and C lay out a notebook's own page, so a page shows one notebook and a notebook's cells appear on that one page. Only D lets one page draw on several notebooks, and one notebook feed several pages.
-
-**Our situation.** The site already has its own templates and its own page host. It wants notebooks to supply values, never layout. One notebook's values appear on several pages, each placing them differently, and one page draws on several notebooks.
+**Our situation.** Notebook Kit's Vite plugin compiles each notebook into its own page, one to one, which suits A, B and C. Our site already has its own templates and page host, wants notebooks to supply values and never layout, and maps notebooks to pages many to many: one notebook's values appear on several pages, and one page draws on several notebooks.
 
 ### Decision
 
@@ -84,7 +82,7 @@ Costs and limits:
 
 - **Values, not displays.** A slot gets a variable's value. Anything a cell only displays has no name and no slot: an expression cell, a `display()` call, the input element inside `const x = view(…)`. The notebook therefore keeps the input element and its value apart (`thresholdInput`, and `threshold = Generators.input(thresholdInput)`), which is the boilerplate `view()` exists to remove.
 - **One slot per name.** A DOM node can only be in one place, so two slots naming `chart` take it from each other.
-- **Several notebooks need a module each.** This repository shows one notebook. Two notebooks that both declare `chart` can't share one runtime module, so a page that draws on several notebooks needs one module per notebook, and slots that say which notebook they mean. Our production host does this; it isn't shown here.
+- **Several notebooks need separate scopes.** This repository shows one notebook. Two notebooks may declare the same name, so a page that draws on several needs a `NotebookRuntime` (or runtime module) per notebook, and slots that say which notebook they mean. Our production host does this; it isn't shown here.
 - **A name is a contract.** Renaming a variable breaks the template. The build catches it, but nothing renames it for you.
 - **Most of Notebook Kit's page is left behind.** Its Vite plugin does more than run cells, such as static Markdown rendering, `FileAttachment` and database resolution, and themes. This host does none of that. Our production host re-implements the parts it needs, which is a real cost.
 - **An undocumented seam.** The state object passed to `define` (`{root, expanded, variables}`) is internal plumbing. A small documented way to mount a named value into an element would serve any external host, whichever way PR #103 goes.
