@@ -2,20 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Rainfall dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rainfall dashboard: notebook outputs into template slots</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&display=swap">
   <style>
     /* Condense: ink on a drafting sheet, ruled square cells, one teal. */
     body { font: 17px/1.5 Archivo, sans-serif; color: #0C2B33; background: #F5F8F7; margin: 2rem; accent-color: #009B8F; }
-    h2 { margin-top: 0; font-size: 12.5px; font-stretch: 78%; letter-spacing: 0.06em; text-transform: uppercase; color: #3A535B; }
+    a { color: inherit; text-decoration-color: #009B8F; text-underline-offset: 3px; }
+    code { font: 14px ui-monospace, monospace; }
+    header, footer { max-width: 64rem; }
+    header p { max-width: 44rem; }
+    h1 { margin: 0.25rem 0 0.5rem; }
+    h2, .eyebrow { margin-top: 0; font-size: 12.5px; font-stretch: 78%; letter-spacing: 0.06em; text-transform: uppercase; color: #3A535B; }
     main { display: grid; grid-template-columns: 20rem 1fr; max-width: 64rem; border: 1.5px solid; }
     aside, section { background: #fff; padding: 16px 24px 20px; }
     aside { border-right: 1.5px solid; }
     @media (max-width: 56rem) { main { grid-template-columns: 1fr; } aside { border-right: 0; border-bottom: 1.5px solid; } }
+    /* Show the technique: each slot labels the name it asks for. */
+    [data-output] { margin-bottom: 1rem; }
+    [data-output]::before { content: 'data-output="' attr(data-output) '"'; display: block; margin-bottom: 4px; font: 12px ui-monospace, monospace; color: #009B8F; }
+    footer { margin-top: 1.5rem; font-size: 15px; color: #3A535B; }
   </style>
 </head>
 <body>
-  <h1>Rainfall dashboard</h1>
+  <header>
+    <p class="eyebrow">Spike, November 2026 · not maintained</p>
+    <h1>Rainfall dashboard</h1>
+    <p>
+      The slider, the summary and the chart are values from one <a href="https://observablehq.com/notebook-kit/">Observable Notebook Kit</a> notebook,
+      <a href="https://github.com/olivergeorge/2611-spike-notebook-output-slots/blob/main/notebook.html"><code>notebook.html</code></a>.
+      This page is plain HTML and CSS: each slot is a <code>&lt;div data-output="name"&gt;</code>, filled by name, and all of them share one runtime, so they react together.
+    </p>
+    <p>
+      <a href="https://github.com/olivergeorge/2611-spike-notebook-output-slots">Source on GitHub</a> ·
+      <a href="https://github.com/olivergeorge/2611-spike-notebook-output-slots#adr-bind-template-slots-to-notebook-values-by-name-in-a-host-outside-notebook-kits-page">The decision record</a> ·
+      <a href="https://github.com/observablehq/notebook-kit/pull/103">notebook-kit#103</a>
+    </p>
+  </header>
   <main>
     <aside>
       <h2>Controls</h2>
@@ -27,6 +50,11 @@
       <div data-output="chart"></div>
     </section>
   </main>
+  <footer>
+    The layout: <a href="https://github.com/olivergeorge/2611-spike-notebook-output-slots/blob/main/index.html"><code>index.html</code></a>.
+    The binding: <a href="https://github.com/olivergeorge/2611-spike-notebook-output-slots/blob/main/slots.js"><code>slots.js</code></a>.
+    The data is made up.
+  </footer>
   <script type="module" src="./slots.js"></script>
 </body>
 </html>
