@@ -1,6 +1,8 @@
 # Notebook outputs into template slots, by name
 
-**[Live demo](https://olivergeorge.github.io/notebook-output-slots/)**
+**[Live demo](https://olivergeorge.github.io/2611-spike-notebook-output-slots/)**
+
+> A spike from November 2026: a point-in-time effort, not maintained.
 
 A minimal proof of concept: write components in an [Observable Notebook Kit](https://github.com/observablehq/notebook-kit) notebook, then lay them out in a plain HTML + CSS page that refers to them by name.
 
