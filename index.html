@@ -8,9 +8,10 @@
     /* Condense: ink on a drafting sheet, ruled square cells, one teal. */
     body { font: 17px/1.5 Archivo, sans-serif; color: #0C2B33; background: #F5F8F7; margin: 2rem; accent-color: #009B8F; }
     h2 { margin-top: 0; font-size: 12.5px; font-stretch: 78%; letter-spacing: 0.06em; text-transform: uppercase; color: #3A535B; }
-    main { display: grid; grid-template-columns: 16rem 1fr; max-width: 64rem; border: 1.5px solid; }
+    main { display: grid; grid-template-columns: 20rem 1fr; max-width: 64rem; border: 1.5px solid; }
     aside, section { background: #fff; padding: 16px 24px 20px; }
     aside { border-right: 1.5px solid; }
+    @media (max-width: 56rem) { main { grid-template-columns: 1fr; } aside { border-right: 0; border-bottom: 1.5px solid; } }
   </style>
 </head>
 <body>
